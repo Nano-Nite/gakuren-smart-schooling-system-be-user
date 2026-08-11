@@ -4,7 +4,8 @@ import (
 	"log"
 
 	"gakuren-system.com/pkg/db"
-	"gakuren-system.com/pkg/route"
+	"gakuren-system.com/pkg/helper"
+	v1 "gakuren-system.com/pkg/route/v1"
 )
 
 func main() {
@@ -14,6 +15,8 @@ func main() {
 
 	// Setup and launch the Fiber routes
 	log.Println("Launching Fiber Routes")
-	route.SetupRoutes()
+	if "v1" == helper.API_VERSION {
+		v1.SetupRoutes()
+	}
 
 }

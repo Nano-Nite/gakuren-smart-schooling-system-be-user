@@ -1,6 +1,9 @@
 package model
 
-type LoginResponse struct {
-	Message string `json:"message"`
-	Token   string `json:"token,omitempty"`
+type LoginPayload struct {
+	Email string `json:"email,omitempty"`
+}
+
+type PublicKeyResponse struct {
+	PublicKey string `json:"public_key,omitempty"`
 }
