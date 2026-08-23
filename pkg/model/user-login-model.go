@@ -11,7 +11,7 @@ type UserLoginModel struct {
 	UserUUID      uuid.UUID  `db:"user_uuid"`
 	Username      string     `db:"username"`
 	Password      string     `db:"password"`
-	LastLogin     time.Time  `db:"last_login"`
+	LastLogin     *time.Time `db:"last_login"`
 	LastLogout    *time.Time `db:"last_logout"`
 	FailedAttempt int        `db:"failed_attempt"`
 	StatusUUID    uuid.UUID  `db:"status_uuid"`
