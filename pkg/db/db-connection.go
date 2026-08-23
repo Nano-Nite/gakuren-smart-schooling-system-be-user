@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -12,8 +13,10 @@ var Conn *pgx.Conn
 var DBCtx context.Context
 
 func ConnectDB() {
-	dbURL := os.Getenv("DATABASE_URL")
-	log.Println(dbURL)
+	dbURL := strings.TrimSpace(os.Getenv("DATABASE_URL"))
+	if dbURL == "" {
+		log.Fatal("DATABASE_URL is not set; configure the PostgreSQL connection string in the deployment environment")
+	}
 
 	conn, err := pgx.Connect(context.Background(), dbURL)
 	if err != nil {
