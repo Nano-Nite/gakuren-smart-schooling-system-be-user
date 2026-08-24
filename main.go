@@ -16,7 +16,9 @@ func main() {
 
 	// Run JWT Service
 	log.Println("Starting JWT Service")
-	auth.NewJWTService()
+	if err := auth.NewJWTService(); err != nil {
+		log.Fatal(err)
+	}
 
 	// Setup and launch the Fiber routes
 	log.Println("Launching Fiber Routes")

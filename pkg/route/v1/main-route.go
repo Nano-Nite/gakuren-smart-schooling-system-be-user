@@ -3,6 +3,7 @@ package v1
 import (
 	"log"
 	"os"
+	"strings"
 
 	"gakuren-system.com/pkg/auth"
 	"gakuren-system.com/pkg/helper"
@@ -78,5 +79,11 @@ func SetupRoutes() {
 	// child route setup
 	SetupUserManagementRoutes(app, helper.API_VERSION)
 
-	log.Fatal(app.Listen(":" + os.Getenv("PORT")))
+	port := strings.TrimSpace(os.Getenv("PORT"))
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("Listening on port %s", port)
+	log.Fatal(app.Listen(":" + port))
 }
