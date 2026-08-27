@@ -6,7 +6,7 @@ import (
 )
 
 func GetRoleByUUID(uuid string) (*model.StatusModel, error) {
-	selectedData, err := db.GetSingleDataByQuery[model.StatusModel]("select * from public.role where uuid = $1", uuid)
+	selectedData, err := db.GetSingleDataByQuery[model.StatusModel]("select * from user_sch.role where uuid = $1", uuid)
 	if err != nil {
 		return nil, err
 	}
@@ -16,11 +16,11 @@ func GetRoleByUUID(uuid string) (*model.StatusModel, error) {
 
 func GetUserRolePermissionCodeList(uuid string) (*[]string, error) {
 	selectedData, err := db.GetMultipleDataByQuery[model.PermissionModel](`
-	SELECT p.code FROM public.user u
-		JOIN public.role r on u.role_uuid = r.uuid
-		JOIN public.role_permission rp on r.uuid = rp.role_uuid
-		JOIN public.permission p on rp.permission_uuid = p.uuid
-		JOIN public.menu m on m.uuid = p.menu_uuid
+	SELECT p.code FROM user_sch.user u
+		JOIN user_sch.role r on u.role_uuid = r.uuid
+		JOIN user_sch.role_permission rp on r.uuid = rp.role_uuid
+		JOIN user_sch.permission p on rp.permission_uuid = p.uuid
+		JOIN user_sch.menu m on m.uuid = p.menu_uuid
 	WHERE u.uuid = $1
 	GROUP BY p.code, m.order
 	ORDER BY m.order asc;
@@ -39,11 +39,11 @@ func GetUserRolePermissionCodeList(uuid string) (*[]string, error) {
 
 func GetUserMenuList(uuid string) (*[]string, error) {
 	selectedData, err := db.GetMultipleDataByQuery[model.MenuModel](`
-	SELECT m.name FROM public.user u
-		JOIN public.role r on u.role_uuid = r.uuid
-		JOIN public.role_permission rp on r.uuid = rp.role_uuid
-		JOIN public.permission p on rp.permission_uuid = p.uuid
-		JOIN public.menu m on m.uuid = p.menu_uuid
+	SELECT m.name FROM user_sch.user u
+		JOIN user_sch.role r on u.role_uuid = r.uuid
+		JOIN user_sch.role_permission rp on r.uuid = rp.role_uuid
+		JOIN user_sch.permission p on rp.permission_uuid = p.uuid
+		JOIN user_sch.menu m on m.uuid = p.menu_uuid
 	WHERE u.uuid = $1
 	GROUP BY m.name, m.order
 	ORDER BY m.order asc;

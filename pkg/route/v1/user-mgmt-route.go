@@ -36,13 +36,13 @@ func SetupUserManagementRoutes(app *fiber.App, API_VERSION string) {
 		}
 
 		//* get user by email
-		selectedUser, err := db.GetSingleDataByQuery[model.UserModel]("select * from public.user where email = $1", payload.Email)
+		selectedUser, err := db.GetSingleDataByQuery[model.UserModel]("select * from user_sch.user where email = $1", payload.Email)
 		if err != nil {
 			return helper.ReturnResponse(c, fiber.StatusUnauthorized, "Invalid username or password", nil, nil)
 		}
 
 		//* get user login by username
-		selectedUserLogin, err := db.GetSingleDataByQuery[model.UserLoginModel]("select * from public.user_login where username = $1", payload.Email)
+		selectedUserLogin, err := db.GetSingleDataByQuery[model.UserLoginModel]("select * from user_sch.user_login where username = $1", payload.Email)
 		if err != nil {
 			return helper.ReturnResponse(c, fiber.StatusUnauthorized, "Invalid username or password", nil, nil)
 		}
@@ -113,7 +113,7 @@ func SetupUserManagementRoutes(app *fiber.App, API_VERSION string) {
 			}
 
 			//* update user_login data
-			if err = db.ExecuteQuery("UPDATE public.user_login SET last_login = now(), updated_date = now(), failed_attempt = 0, status_uuid=(SELECT uuid FROM public.status s WHERE LOWER(s.name) = 'logged in') WHERE uuid = $1", selectedUserLogin.UUID.String()); err != nil {
+			if err = db.ExecuteQuery("UPDATE user_sch.user_login SET last_login = now(), updated_date = now(), failed_attempt = 0, status_uuid=(SELECT uuid FROM public.status s WHERE LOWER(s.name) = 'logged in') WHERE uuid = $1", selectedUserLogin.UUID.String()); err != nil {
 				return helper.ReturnResponse(c, fiber.StatusBadRequest, "User not found", nil, nil)
 			}
 
@@ -131,7 +131,7 @@ func SetupUserManagementRoutes(app *fiber.App, API_VERSION string) {
 			return helper.ReturnResponse(c, fiber.StatusOK, "Login successful", result, nil)
 		} else {
 			//* get refresh_session data
-			selectedData, err := db.GetSingleDataByQuery[model.RefreshTokenModel]("SELECT * FROM public.refresh_session WHERE user_uuid = $1 and revoke_date is null order by created_date DESC LIMIT 1", selectedUser.UUID.String())
+			selectedData, err := db.GetSingleDataByQuery[model.RefreshTokenModel]("SELECT * FROM user_sch.refresh_session WHERE user_uuid = $1 and revoke_date is null order by created_date DESC LIMIT 1", selectedUser.UUID.String())
 			if err != nil {
 				return helper.ReturnResponse(c, fiber.StatusBadRequest, "User not found", nil, nil)
 			}
@@ -199,7 +199,7 @@ func SetupUserManagementRoutes(app *fiber.App, API_VERSION string) {
 					}
 
 					//* update user_login data
-					if err = db.ExecuteQuery("UPDATE public.user_login SET last_login = now(), updated_date = now(), failed_attempt = 0, status_uuid=(SELECT uuid FROM public.status s WHERE LOWER(s.name) = 'logged in') WHERE uuid = $1", selectedUserLogin.UUID.String()); err != nil {
+					if err = db.ExecuteQuery("UPDATE user_sch.user_login SET last_login = now(), updated_date = now(), failed_attempt = 0, status_uuid=(SELECT uuid FROM public.status s WHERE LOWER(s.name) = 'logged in') WHERE uuid = $1", selectedUserLogin.UUID.String()); err != nil {
 						return helper.ReturnResponse(c, fiber.StatusBadRequest, "User not found", nil, nil)
 					}
 
@@ -244,24 +244,24 @@ func SetupUserManagementRoutes(app *fiber.App, API_VERSION string) {
 		}
 
 		//* get user by email
-		selectedUser, err := db.GetSingleDataByQuery[model.UserModel]("select * from public.user where email = $1", payload.Email)
+		selectedUser, err := db.GetSingleDataByQuery[model.UserModel]("select * from user_sch.user where email = $1", payload.Email)
 		if err != nil {
 			return helper.ReturnResponse(c, fiber.StatusBadRequest, "User not found", nil, nil)
 		}
 
 		//* get user_login by username
-		selectedUserLogin, err := db.GetSingleDataByQuery[model.UserLoginModel]("select * from public.user_login where username = $1 and status_uuid = (select uuid from public.status s where lower(name) = 'logged in')", selectedUser.Email)
+		selectedUserLogin, err := db.GetSingleDataByQuery[model.UserLoginModel]("select * from user_sch.user_login where username = $1 and status_uuid = (select uuid from public.status s where lower(name) = 'logged in')", selectedUser.Email)
 		if err != nil {
 			return helper.ReturnResponse(c, fiber.StatusBadRequest, "User already logged out", nil, nil)
 		}
 
 		//* update user_login data
-		if err = db.ExecuteQuery("UPDATE public.user_login SET last_logout = now(), updated_date = now(), status_uuid = (SELECT uuid FROM public.status s WHERE LOWER(s.name) = 'logged out') WHERE uuid = $1", selectedUserLogin.UUID.String()); err != nil {
+		if err = db.ExecuteQuery("UPDATE user_sch.user_login SET last_logout = now(), updated_date = now(), status_uuid = (SELECT uuid FROM public.status s WHERE LOWER(s.name) = 'logged out') WHERE uuid = $1", selectedUserLogin.UUID.String()); err != nil {
 			return helper.ReturnResponse(c, fiber.StatusBadRequest, "User session not found", nil, nil)
 		}
 
 		//* revoke refresh_session data
-		if err = db.ExecuteQuery("UPDATE public.refresh_session SET revoke_date = NOW() WHERE uuid = (SELECT uuid FROM public.refresh_session WHERE user_uuid = $1 AND revoke_date IS NULL ORDER BY created_date DESC LIMIT 1)", selectedUserLogin.UserUUID.String()); err != nil {
+		if err = db.ExecuteQuery("UPDATE user_sch.refresh_session SET revoke_date = NOW() WHERE uuid = (SELECT uuid FROM user_sch.refresh_session WHERE user_uuid = $1 AND revoke_date IS NULL ORDER BY created_date DESC LIMIT 1)", selectedUserLogin.UserUUID.String()); err != nil {
 			return helper.ReturnResponse(c, fiber.StatusBadRequest, "User not found", nil, nil)
 		}
 

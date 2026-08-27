@@ -192,7 +192,7 @@ func UpsertRefreshToken(userID string, accessToken *jwt.Token, refreshToken *jwt
 	}
 	defer tx.Rollback(context.Background())
 
-	query := `SELECT * FROM public.refresh_session WHERE user_uuid = $1 and revoke_date is null order by created_date DESC LIMIT 1`
+	query := `SELECT * FROM user_sch.refresh_session WHERE user_uuid = $1 and revoke_date is null order by created_date DESC LIMIT 1`
 	selectedRefreshData, err := db.GetSingleDataByQuery[model.RefreshTokenModel](query, userID)
 	if err != nil {
 		if err.Error() != "no rows in result set" {
@@ -200,7 +200,7 @@ func UpsertRefreshToken(userID string, accessToken *jwt.Token, refreshToken *jwt
 		}
 	}
 
-	query = `INSERT INTO public.refresh_session (user_uuid, token_hash, expired_date, user_agent, ip_address, access_token_hash, access_token_expired_date) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING uuid`
+	query = `INSERT INTO user_sch.refresh_session (user_uuid, token_hash, expired_date, user_agent, ip_address, access_token_hash, access_token_expired_date) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING uuid`
 	accessExpDate, _ := accessToken.Claims.GetExpirationTime()
 	refreshExpDate, _ := refreshToken.Claims.GetExpirationTime()
 	returnUUID, err := db.InsertReturnUUID(query, userID, refreshToken.Raw, refreshExpDate.Format(time.RFC3339), c.UserAgent(), c.IP(), accessToken.Raw, accessExpDate.Format(time.RFC3339))
@@ -209,7 +209,7 @@ func UpsertRefreshToken(userID string, accessToken *jwt.Token, refreshToken *jwt
 	}
 
 	if selectedRefreshData != nil {
-		query = `UPDATE public.refresh_session SET revoke_date=$1, replaced_by=$2 WHERE uuid=$3`
+		query = `UPDATE user_sch.refresh_session SET revoke_date=$1, replaced_by=$2 WHERE uuid=$3`
 		if err = db.ExecuteQuery(query, time.Now().Format(time.RFC3339), returnUUID, selectedRefreshData.UUID); err != nil {
 			return err
 		}
@@ -233,9 +233,9 @@ func GetLoginDataByEmail(email string) (*model.LoginData, error) {
 		u.version user_version,
 		r.name role_name,
 		r.level role_level
-	from public.tenant t
-	join public.user u on t.uuid = u.tenant_uuid
-	join public.role r on u.role_uuid = r.uuid
+	from user_sch.tenant t
+	join user_sch.user u on t.uuid = u.tenant_uuid
+	join user_sch.role r on u.role_uuid = r.uuid
 	where u.email = $1
 	`, email)
 	if err != nil {
@@ -251,7 +251,7 @@ func UpdateRefreshTokenAccessToken(userID string, accessToken *jwt.Token, c fibe
 	}
 	defer tx.Rollback(context.Background())
 
-	query := `SELECT * FROM public.refresh_session WHERE user_uuid = $1 and revoke_date is null order by created_date DESC LIMIT 1`
+	query := `SELECT * FROM user_sch.refresh_session WHERE user_uuid = $1 and revoke_date is null order by created_date DESC LIMIT 1`
 	selectedRefreshData, err := db.GetSingleDataByQuery[model.RefreshTokenModel](query, userID)
 	if err != nil {
 		if err.Error() != "no rows in result set" {
@@ -260,7 +260,7 @@ func UpdateRefreshTokenAccessToken(userID string, accessToken *jwt.Token, c fibe
 	}
 
 	if selectedRefreshData != nil {
-		query = `UPDATE public.refresh_session SET access_token_hash=$1, access_token_expired_date=$2 WHERE uuid=$3`
+		query = `UPDATE user_sch.refresh_session SET access_token_hash=$1, access_token_expired_date=$2 WHERE uuid=$3`
 		if err = db.ExecuteQuery(query, accessToken.Raw, time.Now().Format(time.RFC3339), selectedRefreshData.UUID); err != nil {
 			return err
 		}
