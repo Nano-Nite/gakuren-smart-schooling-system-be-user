@@ -4,6 +4,7 @@ import (
 	"crypto/rsa"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 type LoginPayload struct {
@@ -36,15 +37,16 @@ type RefreshClaims struct {
 }
 
 type LoginData struct {
-	Code          string `json:"code"`
-	TenantName    string `json:"tenant_name"`
-	Timezone      string `json:"timezone"`
-	UserName      string `json:"user_name"`
-	Email         string `json:"email"`
-	Phone         string `json:"phone"`
-	Address       string `json:"address"`
-	RoleName      string `json:"role_name"`
-	RoleLevel     int    `json:"role_level"`
-	TenantVersion string `json:"tenant_version"`
-	UserVersion   string `json:"user_version"`
+	TenantUUID    uuid.UUID `json:"tenant_uuid"`
+	Code          string    `json:"code"`
+	TenantName    string    `json:"tenant_name"`
+	Timezone      string    `json:"timezone"`
+	UserName      string    `json:"user_name"`
+	Email         string    `json:"email"`
+	Phone         string    `json:"phone"`
+	Address       string    `json:"address"`
+	RoleName      string    `json:"role_name"`
+	RoleLevel     int       `json:"role_level"`
+	TenantVersion string    `json:"tenant_version"`
+	UserVersion   string    `json:"user_version"`
 }

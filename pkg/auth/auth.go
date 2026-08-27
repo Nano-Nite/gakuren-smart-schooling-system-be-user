@@ -221,6 +221,7 @@ func UpsertRefreshToken(userID string, accessToken *jwt.Token, refreshToken *jwt
 func GetLoginDataByEmail(email string) (*model.LoginData, error) {
 	loginData, err := db.GetSingleDataByQuery[model.LoginData](`
 	select
+		t."uuid" as tenant_uuid,
 		t.code,
 		t.name tenant_name,
 		t.timezone,
