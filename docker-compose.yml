@@ -8,3 +8,25 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      # These fallback variables ensure the database initializes even if Portainer values skip a field
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+    ports:
+      # Change the fallback on the left side to 5433 if your host port 5432 remains busy
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # Simplified shell string execution syntax to safely parse variables inside alpine images
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:
