@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.golangapp.rule=PathPrefix(`{catchall:.*}`)"
+      - "traefik.http.routers.golangapp.rule=PathPrefix(`/`)"
       - "traefik.http.routers.golangapp.entrypoints=gakuren-network"
       - "traefik.http.services.golangapp.loadbalancer.server.port=3000"
     expose:
