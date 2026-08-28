@@ -6,7 +6,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.golangapp.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.golangapp.entrypoints=web"
+      - "traefik.http.routers.golangapp.entrypoints=gakuren-network"
       - "traefik.http.services.golangapp.loadbalancer.server.port=3000"
     expose:
       - "3000"
