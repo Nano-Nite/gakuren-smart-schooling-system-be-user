@@ -7,8 +7,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.user-mgmt.rule=PathPrefix(`/`)"
       - "traefik.http.routers.user-mgmt.entrypoints=gakuren-network"
-      - "traefik.http.services.user-mgmt.loadbalancer.server.port=3000"
       - "traefik.http.routers.user-mgmt.service=user-mgmt-svc"
+      - "traefik.http.services.user-mgmt-svc.loadbalancer.server.port=3000"
     expose:
       - "3000"
     networks:
