@@ -6,7 +6,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.user-mgmt-router.rule=PathPrefix(`/auth`)"
-      - "traefik.http.routers.user-mgmt-router.entrypoints=gakuren-network"
+      - "traefik.http.routers.user-mgmt-router.entrypoints=websecure"
+      - "traefik.http.routers.user-mgmt-router.tls.certresolver=letsencrypt"
+      - "traefik.http.middlewares.user-mgmt-stripprefix.stripprefix.prefixes=/auth"
+      - "traefik.http.routers.user-mgmt-router.middlewares=user-mgmt-stripprefix"
       - "traefik.http.services.user-mgmt-service.loadbalancer.server.port=3000"
     expose:
       - "3000"
