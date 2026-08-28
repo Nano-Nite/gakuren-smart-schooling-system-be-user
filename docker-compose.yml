@@ -5,14 +5,15 @@ services:
       dockerfile: Dockerfile
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.user-mgmt.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.user-mgmt.entrypoints=gakuren-network"
-      - "traefik.http.routers.user-mgmt.service=user-mgmt-svc"
-      - "traefik.http.services.user-mgmt-svc.loadbalancer.server.port=3000"
+      - "traefik.http.routers.user-mgmt-router.rule=PathPrefix(`/auth`)"
+      - "traefik.http.routers.user-mgmt-router.entrypoints=gakuren-network"
+      - "traefik.http.services.user-mgmt-service.loadbalancer.server.port=3000"
     expose:
       - "3000"
     networks:
-      - gakuren-network
+      gakuren-network:
+        aliases:
+          - user-mgmt
 
 networks:
   gakuren-network:
