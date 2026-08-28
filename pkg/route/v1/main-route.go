@@ -66,9 +66,7 @@ func SetupRoutes() {
 		log.Println(string(decrypted))
 
 		if string(decrypted) != original {
-			if err != nil {
-				return helper.ReturnResponse(c, fiber.StatusInternalServerError, "failed to get public key", nil, err)
-			}
+			return helper.ReturnResponse(c, fiber.StatusInternalServerError, "failed to get public key", nil, err)
 		}
 
 		return helper.ReturnResponse(c, fiber.StatusOK, "public key retrieved successfully", model.PublicKeyResponse{
