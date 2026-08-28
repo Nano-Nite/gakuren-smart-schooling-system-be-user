@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.user-mgmt-router.rule=PathPrefix(`/auth`)"
+      - "traefik.http.routers.user-mgmt-router.rule=PathPrefix(`/v1/auth`)"
       - "traefik.http.routers.user-mgmt-router.entrypoints=web"
       - "traefik.http.services.user-mgmt-service.loadbalancer.server.port=3000"
     expose:

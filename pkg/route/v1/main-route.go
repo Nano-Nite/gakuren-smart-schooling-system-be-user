@@ -24,7 +24,7 @@ func SetupRoutes() {
 		return c.Next()
 	})
 
-	app.Get("/", func(c fiber.Ctx) error {
+	app.Get(helper.API_VERSION+"/auth/test", func(c fiber.Ctx) error {
 		return c.SendString("ready to go !!!!!!!!!!")
 	})
 
