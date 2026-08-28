@@ -5,9 +5,8 @@ services:
       dockerfile: Dockerfile
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.golangapp.rule=Host(`://178.83.188.214`)"
-      - "traefik.http.routers.golangapp.entrypoints=websecure"
-      - "traefik.http.routers.golangapp.tls.certresolver=myresolver"
+      - "traefik.http.routers.golangapp.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.golangapp.entrypoints=web"
       - "traefik.http.services.golangapp.loadbalancer.server.port=3000"
     expose:
       - "3000"
