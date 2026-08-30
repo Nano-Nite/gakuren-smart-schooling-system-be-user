@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -133,7 +134,43 @@ func SetupUserManagementRoutes(app *fiber.App, API_VERSION string) {
 			//* get refresh_session data
 			selectedData, err := db.GetSingleDataByQuery[model.RefreshTokenModel]("SELECT * FROM user_sch.refresh_session WHERE user_uuid = $1 and revoke_date is null order by created_date DESC LIMIT 1", selectedUser.UUID.String())
 			if err != nil {
-				return helper.ReturnResponse(c, fiber.StatusBadRequest, "User not found", nil, nil)
+				if err.Error() != "no rows in result set" {
+					return helper.ReturnResponse(c, fiber.StatusBadRequest, "User not found", nil, nil)
+				} else { // indicates no user login data, probably new user
+					log.Println("indicates no user login data, probably new user")
+					//* generate access token and refresh token
+					accessToken, err := auth.GenerateAccessToken(selectedUser.UUID.String(), selectedUser.Email, []string{"admin"}, *auth.JWTService)
+					if err != nil || accessToken == nil {
+						return helper.ReturnResponse(c, fiber.StatusInternalServerError, "Failed to generate access token", nil, err)
+					}
+
+					refreshToken, err := auth.GenerateRefreshToken(selectedUser.UUID.String(), selectedUser.Email)
+					if err != nil || refreshToken == nil {
+						return helper.ReturnResponse(c, fiber.StatusInternalServerError, "Failed to generate refresh token", nil, err)
+					}
+
+					if err = auth.UpsertRefreshToken(selectedUser.UUID.String(), accessToken, refreshToken, c); err != nil {
+						return helper.ReturnResponse(c, fiber.StatusInternalServerError, "Failed to store refresh token", nil, err)
+					}
+
+					//* update user_login data
+					if err = db.ExecuteQuery("UPDATE user_sch.user_login SET last_login = now(), updated_date = now(), failed_attempt = 0, status_uuid=(SELECT uuid FROM public.status s WHERE LOWER(s.name) = 'logged in') WHERE uuid = $1", selectedUserLogin.UUID.String()); err != nil {
+						return helper.ReturnResponse(c, fiber.StatusBadRequest, "User not found", nil, nil)
+					}
+
+					token["access_token"] = accessToken.Raw
+					token["token_type"] = "bearer"
+					token["expired_in"] = accessTokenExpired * 60
+					token["refresh_token"] = refreshToken.Raw
+					token["refresh_expired_in"] = 3600 * 24 * refreshTokenExpired
+
+					result["user_data"] = loginData
+					result["token"] = token
+					result["permission"] = selectedPermission
+					result["menu"] = selectedMenu
+
+					return helper.ReturnResponse(c, fiber.StatusOK, "Login successful", result, nil)
+				}
 			}
 
 			if time.Now().Compare(*selectedData.AccessTokenExpiredDate) < 0 { // active access token
