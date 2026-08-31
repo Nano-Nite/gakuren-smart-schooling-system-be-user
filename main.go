@@ -20,11 +20,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// res, err := auth.HashPassword("stafftu@yopmail.com" + "|" + "ae1368b8-bec5-4a0a-9c4f-dae79a1d5beb" + "|" + "test123")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// log.Println(res)
+	res, err := auth.HashPassword("wakasek@yopmail.com" + "|" + "ae1368b8-bec5-4a0a-9c4f-dae79a1d5beb" + "|" + "test123")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(res)
 
 	// Setup and launch the Fiber routes
 	log.Println("Launching Fiber Routes")
