@@ -20,7 +20,7 @@ func GetUserRolePermissionCodeList(uuid string) (*[]string, error) {
 		JOIN user_sch.role r on u.role_uuid = r.uuid
 		JOIN user_sch.role_permission rp on r.uuid = rp.role_uuid
 		JOIN user_sch.permission p on rp.permission_uuid = p.uuid
-		JOIN user_sch.menu m on m.uuid = p.menu_uuid
+		LEFT JOIN user_sch.menu m on m.uuid = p.menu_uuid
 	WHERE u.uuid = $1
 	GROUP BY p.code, m.order
 	ORDER BY m.order asc;
