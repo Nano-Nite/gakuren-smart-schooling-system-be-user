@@ -38,8 +38,9 @@ type RefreshClaims struct {
 
 type LoginData struct {
 	TenantUUID    uuid.UUID `json:"tenant_uuid"`
-	Code          string    `json:"code"`
+	SchoolUUID    uuid.UUID `json:"school_uuid"`
 	TenantName    string    `json:"tenant_name"`
+	Code          string    `json:"code"`
 	Timezone      string    `json:"timezone"`
 	UserName      string    `json:"user_name"`
 	Email         string    `json:"email"`

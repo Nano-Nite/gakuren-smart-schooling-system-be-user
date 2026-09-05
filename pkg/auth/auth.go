@@ -222,8 +222,9 @@ func GetLoginDataByEmail(email string) (*model.LoginData, error) {
 	loginData, err := db.GetSingleDataByQuery[model.LoginData](`
 	select
 		t."uuid" as tenant_uuid,
-		t.code,
 		t.name tenant_name,
+		u.school_uuid as school_uuid,
+		sc.code,
 		t.timezone,
 		t.version tenant_version,
 		u.name user_name,
@@ -236,6 +237,7 @@ func GetLoginDataByEmail(email string) (*model.LoginData, error) {
 	from user_sch.tenant t
 	join user_sch.user u on t.uuid = u.tenant_uuid
 	join user_sch.role r on u.role_uuid = r.uuid
+	join school_sch.school sc on u.school_uuid = sc.uuid
 	where u.email = $1
 	`, email)
 	if err != nil {

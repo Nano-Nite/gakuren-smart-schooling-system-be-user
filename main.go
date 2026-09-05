@@ -20,7 +20,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	res, err := auth.HashPassword("wakasek@yopmail.com" + "|" + "ae1368b8-bec5-4a0a-9c4f-dae79a1d5beb" + "|" + "test123")
+	res, err := auth.HashPassword("stafftu@yopmail.com" + "|" + "ae1368b8-bec5-4a0a-9c4f-dae79a1d5beb" + "|" + "test12345")
 	if err != nil {
 		log.Fatal(err)
 	}
