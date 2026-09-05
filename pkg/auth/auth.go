@@ -186,7 +186,7 @@ func GenerateRefreshToken(userID string, username string) (*jwt.Token, error) {
 }
 
 func UpsertRefreshToken(userID string, accessToken *jwt.Token, refreshToken *jwt.Token, c fiber.Ctx) error {
-	tx, err := db.Conn.Begin(db.DBCtx)
+	tx, err := db.Conn.Begin(context.Background())
 	if err != nil {
 		return err
 	}
@@ -215,7 +215,7 @@ func UpsertRefreshToken(userID string, accessToken *jwt.Token, refreshToken *jwt
 		}
 	}
 
-	return tx.Commit(db.DBCtx)
+	return tx.Commit(context.Background())
 }
 
 func GetLoginDataByEmail(email string) (*model.LoginData, error) {
@@ -245,7 +245,7 @@ func GetLoginDataByEmail(email string) (*model.LoginData, error) {
 }
 
 func UpdateRefreshTokenAccessToken(userID string, accessToken *jwt.Token, c fiber.Ctx) error {
-	tx, err := db.Conn.Begin(db.DBCtx)
+	tx, err := db.Conn.Begin(context.Background())
 	if err != nil {
 		return err
 	}
@@ -266,7 +266,7 @@ func UpdateRefreshTokenAccessToken(userID string, accessToken *jwt.Token, c fibe
 		}
 	}
 
-	return tx.Commit(db.DBCtx)
+	return tx.Commit(context.Background())
 }
 
 func ValidateAccessToken(tokenString string) (*model.AccessTokenClaims, error) {

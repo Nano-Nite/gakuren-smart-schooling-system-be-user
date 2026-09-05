@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"log"
 
 	"github.com/google/uuid"
@@ -8,7 +9,7 @@ import (
 )
 
 func GetSingleDataByQuery[T any](query string, param ...interface{}) (*T, error) {
-	rows, err := Conn.Query(DBCtx, query, param...)
+	rows, err := Conn.Query(context.Background(), query, param...)
 	if err != nil {
 		log.Println(err.Error())
 		return nil, err
@@ -24,7 +25,7 @@ func GetSingleDataByQuery[T any](query string, param ...interface{}) (*T, error)
 }
 
 func GetMultipleDataByQuery[T any](query string, param ...interface{}) (*[]T, error) {
-	rows, err := Conn.Query(DBCtx, query, param...)
+	rows, err := Conn.Query(context.Background(), query, param...)
 	if err != nil {
 		log.Println(err.Error())
 		return nil, err
@@ -40,7 +41,7 @@ func GetMultipleDataByQuery[T any](query string, param ...interface{}) (*[]T, er
 }
 
 func ExecuteQuery(query string, param ...interface{}) error {
-	_, err := Conn.Exec(DBCtx, query, param...)
+	_, err := Conn.Exec(context.Background(), query, param...)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -51,7 +52,7 @@ func ExecuteQuery(query string, param ...interface{}) error {
 
 func InsertReturnUUID(query string, param ...interface{}) (*uuid.UUID, error) {
 	var id uuid.UUID
-	err := Conn.QueryRow(DBCtx, query, param...).Scan(&id)
+	err := Conn.QueryRow(context.Background(), query, param...).Scan(&id)
 	if err != nil {
 		log.Println(err.Error())
 		return nil, err
