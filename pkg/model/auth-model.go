@@ -24,8 +24,12 @@ type JWTService struct {
 }
 
 type AccessTokenClaims struct {
-	Username string   `json:"username"`
-	Roles    []string `json:"roles,omitempty"`
+	SessionID  string   `json:"sid"`
+	TenantUUID string   `json:"tenant_uuid"`
+	SchoolUUID string   `json:"school_uuid"`
+	Permission []string `json:"permission"`
+	Username   string   `json:"username"`
+	Roles      []string `json:"roles,omitempty"`
 
 	jwt.RegisteredClaims
 }
@@ -37,6 +41,7 @@ type RefreshClaims struct {
 }
 
 type LoginData struct {
+	UUID          uuid.UUID `json:"uuid"`
 	TenantUUID    uuid.UUID `json:"tenant_uuid"`
 	SchoolUUID    uuid.UUID `json:"school_uuid"`
 	TenantName    string    `json:"tenant_name"`

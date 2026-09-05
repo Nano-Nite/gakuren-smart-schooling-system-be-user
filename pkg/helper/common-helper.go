@@ -13,14 +13,13 @@ func ReturnResponse(c fiber.Ctx, statusCode int, message string, data interface{
 	response := make(map[string]interface{})
 	response["message"] = message
 	response["data"] = nil
-	response["error"] = nil
+	response["error"] = statusCode >= 400
 
 	if data != nil {
 		response["data"] = data
 	}
 	if err != nil {
 		log.Println(err)
-		response["error"] = err.Error()
 	}
 	return c.Status(statusCode).JSON(response)
 }
